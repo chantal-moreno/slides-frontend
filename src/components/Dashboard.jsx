@@ -4,6 +4,7 @@ import Button from 'react-bootstrap/Button';
 import { useEffect, useState } from 'react';
 import Presentation from './Presentation';
 import Stack from 'react-bootstrap/Stack';
+import OthersPresentations from './OthersPresentations';
 
 function Dashboard() {
   const [user, setUser] = useState(null);
@@ -30,6 +31,7 @@ function Dashboard() {
         <Presentation userPresentations={user?.presentations || []} />
         <h2 className="mt-5">Others presentations</h2>
         <hr />
+        <OthersPresentations userId={user?._id || null} />
       </Container>
     </>
   );

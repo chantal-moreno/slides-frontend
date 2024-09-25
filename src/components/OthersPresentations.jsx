@@ -7,40 +7,30 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { format } from 'date-fns';
 
-function Presentation({ userPresentations }) {
+function OthersPresentations({ userId }) {
   const [presentations, setPresentations] = useState([]);
-
   const formatDate = (date) => {
     return format(new Date(date), 'dd/MM/yyyy - HH:mm');
   };
-
   useEffect(() => {
+    if (!userId) {
+      console.error('UserID no disponible');
+      return;
+    }
+
     const fetchPresentations = async () => {
       const server = 'http://localhost:3000';
-
       try {
-        const fetchPromises = userPresentations.map(async (presentationId) => {
-          const response = await axios.get(
-            `${server}/presentations/${presentationId}`
-          );
-          return response.data;
-        });
-
-        const presentationsData = await Promise.all(fetchPromises);
-        setPresentations(presentationsData);
+        const response = await axios.get(
+          `${server}/presentations/exclude/${userId}`
+        );
+        setPresentations(response.data);
       } catch (error) {
         console.error('Error fetching presentations:', error);
       }
     };
-
-    if (userPresentations && userPresentations.length > 0) {
-      fetchPresentations();
-    }
-  }, [userPresentations]);
-
-  if (!userPresentations || userPresentations.length === 0) {
-    return <p>You have not created any presentation :c</p>;
-  }
+    fetchPresentations();
+  }, [userId]);
 
   return (
     <Row xs={1} md={2} lg={4} className="g-4">
@@ -56,6 +46,9 @@ function Presentation({ userPresentations }) {
               <Card.Subtitle className="mb-2 text-muted">
                 {`Created: ${formatDate(presentation.createdAt)}`}
               </Card.Subtitle>
+              <Card.Subtitle className="mb-2 text-muted">
+                {`Owner: ${presentation.owner}`}
+              </Card.Subtitle>
               <Button variant="primary">Open</Button>
             </Card.Body>
             <Card.Footer className="text-muted">
@@ -68,8 +61,8 @@ function Presentation({ userPresentations }) {
   );
 }
 
-Presentation.propTypes = {
-  userPresentations: PropTypes.array.isRequired,
+OthersPresentations.propTypes = {
+  userId: PropTypes.string.isRequired,
 };
 
-export default Presentation;
+export default OthersPresentations;
