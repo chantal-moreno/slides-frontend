@@ -9,6 +9,7 @@ import { format } from 'date-fns';
 
 function OthersPresentations({ userId }) {
   const [presentations, setPresentations] = useState([]);
+  const [ownerNicknames, setOwnerNicknames] = useState({});
   const formatDate = (date) => {
     return format(new Date(date), 'dd/MM/yyyy - HH:mm');
   };
@@ -17,16 +18,42 @@ function OthersPresentations({ userId }) {
       console.error('UserID no disponible');
       return;
     }
-
     const fetchPresentations = async () => {
       const server = 'http://localhost:3000';
       try {
         const response = await axios.get(
           `${server}/presentations/exclude/${userId}`
         );
-        setPresentations(response.data);
+        const presentationsData = response.data;
+        setPresentations(presentationsData);
+
+        // Obtener los nicknames de los owners
+        const ownerIds = presentationsData.map(
+          (presentation) => presentation.owner
+        );
+        const uniqueOwnerIds = [...new Set(ownerIds)]; // Para evitar solicitudes duplicadas
+
+        const ownerNicknamesPromises = uniqueOwnerIds.map((ownerId) =>
+          axios.get(`${server}/users/${ownerId}/nickname`)
+        );
+
+        const ownerNicknamesResponses = await Promise.all(
+          ownerNicknamesPromises
+        );
+        const nicknamesMap = ownerNicknamesResponses.reduce(
+          (acc, response, index) => {
+            acc[uniqueOwnerIds[index]] = response.data.nickname;
+            return acc;
+          },
+          {}
+        );
+
+        setOwnerNicknames(nicknamesMap);
       } catch (error) {
-        console.error('Error fetching presentations:', error);
+        console.error(
+          'Error fetching presentations and owners nicknames:',
+          error
+        );
       }
     };
     fetchPresentations();
@@ -47,7 +74,7 @@ function OthersPresentations({ userId }) {
                 {`Created: ${formatDate(presentation.createdAt)}`}
               </Card.Subtitle>
               <Card.Subtitle className="mb-2 text-muted">
-                {`Owner: ${presentation.owner}`}
+                {`Owner:  ${ownerNicknames[presentation.owner] || 'Unknown'}`}
               </Card.Subtitle>
               <Button variant="primary">Open</Button>
             </Card.Body>
