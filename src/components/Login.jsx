@@ -19,7 +19,8 @@ function Login() {
       const response = await axios.post(`${server}/login`, { nickname });
 
       if (response.status === 200) {
-        alert('User registered successfully');
+        localStorage.setItem('user', JSON.stringify(response.data));
+        console.log(response.data);
         // Go to dashboard
         navigate('/dashboard');
       } else {

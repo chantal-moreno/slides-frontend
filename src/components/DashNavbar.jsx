@@ -2,9 +2,14 @@ import slideLogo from '../assets/logoipsum-245.svg';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 
 function DashNavbar() {
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    navigate('/');
+  };
   return (
     <Navbar expand="lg" className="bg-body-tertiary">
       <Container>
@@ -26,9 +31,7 @@ function DashNavbar() {
               Dashboard
             </Nav.Link>
           </Nav>
-          <Nav.Link as={NavLink} to="/">
-            Logout
-          </Nav.Link>
+          <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
         </Navbar.Collapse>
       </Container>
     </Navbar>
