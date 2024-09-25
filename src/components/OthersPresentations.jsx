@@ -27,11 +27,11 @@ function OthersPresentations({ userId }) {
         const presentationsData = response.data;
         setPresentations(presentationsData);
 
-        // Obtener los nicknames de los owners
+        // owners nicknames
         const ownerIds = presentationsData.map(
           (presentation) => presentation.owner
         );
-        const uniqueOwnerIds = [...new Set(ownerIds)]; // Para evitar solicitudes duplicadas
+        const uniqueOwnerIds = [...new Set(ownerIds)]; // avoid duplicates
 
         const ownerNicknamesPromises = uniqueOwnerIds.map((ownerId) =>
           axios.get(`${server}/users/${ownerId}/nickname`)

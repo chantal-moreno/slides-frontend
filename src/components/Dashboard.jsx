@@ -5,8 +5,10 @@ import { useEffect, useState } from 'react';
 import Presentation from './Presentation';
 import Stack from 'react-bootstrap/Stack';
 import OthersPresentations from './OthersPresentations';
+import NewPresentation from './Modals/NewPresentation';
 
 function Dashboard() {
+  const [modalShow, setModalShow] = useState(false);
   const [user, setUser] = useState(null);
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem('user'));
@@ -24,7 +26,14 @@ function Dashboard() {
             <h2>Your presentations</h2>
           </div>
           <div className="p-2">
-            <Button variant="primary">New Presentation</Button>
+            <Button variant="primary" onClick={() => setModalShow(true)}>
+              New Presentation
+            </Button>
+            <NewPresentation
+              show={modalShow}
+              onHide={() => setModalShow(false)}
+              userId={user?._id || null}
+            />
           </div>
         </Stack>
         <hr />
