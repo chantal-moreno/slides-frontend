@@ -4,10 +4,13 @@ import Form from 'react-bootstrap/Form';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function NewPresentation({ onHide, userId, show }) {
   const [title, setTitle] = useState('');
   const ownerId = userId;
+  const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
     const server = 'http://localhost:3000';
     e.preventDefault();
@@ -18,9 +21,9 @@ function NewPresentation({ onHide, userId, show }) {
       });
 
       if (response.status === 200) {
-        localStorage.setItem('user', JSON.stringify(response.data));
         onHide();
         // Go canvas
+        navigate('/canvas');
       } else {
         alert(`Error: ${response.data.message}`);
       }

@@ -15,7 +15,7 @@ function OthersPresentations({ userId }) {
   };
   useEffect(() => {
     if (!userId) {
-      console.error('UserID no disponible');
+      console.error('UserID undefined');
       return;
     }
     const fetchPresentations = async () => {

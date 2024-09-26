@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { format } from 'date-fns';
 
-function Presentation({ userPresentations }) {
+function Presentation({ userId }) {
   const [presentations, setPresentations] = useState([]);
 
   const formatDate = (date) => {
@@ -16,50 +16,40 @@ function Presentation({ userPresentations }) {
 
   useEffect(() => {
     const fetchPresentations = async () => {
+      if (!userId) {
+        console.error('UserID undefined');
+        return;
+      }
+
       const server = 'http://localhost:3000';
 
       try {
-        const fetchPromises = userPresentations.map(async (presentationId) => {
-          const response = await axios.get(
-            `${server}/presentations/${presentationId}`
-          );
-          return response.data;
-        });
-
-        const presentationsData = await Promise.all(fetchPromises);
-        setPresentations(presentationsData);
+        const response = await axios.get(`${server}/users/${userId}`);
+        console.log(response.data);
+        setPresentations(response.data.presentations || []);
       } catch (error) {
         console.error('Error fetching presentations:', error);
       }
     };
 
-    if (userPresentations && userPresentations.length > 0) {
-      fetchPresentations();
-    }
-  }, [userPresentations]);
-
-  if (!userPresentations || userPresentations.length === 0) {
-    return <p>You have not created any presentation :c</p>;
-  }
+    fetchPresentations();
+  }, [userId]);
 
   return (
     <Row xs={1} md={2} lg={4} className="g-4">
-      {presentations.map((presentation, index) => (
-        <Col key={index}>
+      {presentations.map((presentation) => (
+        <Col key={presentation._id}>
           <Card border="primary">
-            <Card.Img
-              variant="top"
-              src={presentation.image || 'holder.js/100px160'}
-            />
+            <Card.Img variant="top" src={'holder.js/100px160'} />
             <Card.Body>
               <Card.Title>{presentation.title}</Card.Title>
               <Card.Subtitle className="mb-2 text-muted">
-                {`Created: ${formatDate(presentation.createdAt)}`}
+                {`Created:  ${formatDate(presentation.createdAt)}`}
               </Card.Subtitle>
               <Button variant="primary">Open</Button>
             </Card.Body>
             <Card.Footer className="text-muted">
-              {`Last modification: ${formatDate(presentation.updatedAt)}`}
+              {`Last modification:  ${formatDate(presentation.updatedAt)}`}
             </Card.Footer>
           </Card>
         </Col>
@@ -69,7 +59,7 @@ function Presentation({ userPresentations }) {
 }
 
 Presentation.propTypes = {
-  userPresentations: PropTypes.array.isRequired,
+  userId: PropTypes.string.isRequired,
 };
 
 export default Presentation;

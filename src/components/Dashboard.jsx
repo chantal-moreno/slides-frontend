@@ -10,17 +10,26 @@ import NewPresentation from './Modals/NewPresentation';
 function Dashboard() {
   const [modalShow, setModalShow] = useState(false);
   const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem('user'));
-    if (storedUser) {
-      setUser(storedUser);
-    }
+    const fetchUser = () => {
+      const storedUser = JSON.parse(localStorage.getItem('user'));
+      if (storedUser) {
+        setUser(storedUser);
+        console.log('Stored User:', storedUser);
+      }
+      setIsLoading(false);
+    };
+    fetchUser();
   }, []);
+  if (isLoading) {
+    return <div>Loading...</div>; // spinner
+  }
   return (
     <>
       <DashNavbar />
       <Container className="mt-5">
-        {user ? <h1>{`Hi, ${user.nickname}`}</h1> : <h1>Welcome!</h1>}
+        <h1>{`Hi, ${user.nickname}`}</h1>
         <Stack direction="horizontal" gap={1}>
           <div className="p-2">
             <h2>Your presentations</h2>
@@ -37,7 +46,7 @@ function Dashboard() {
           </div>
         </Stack>
         <hr />
-        <Presentation userPresentations={user?.presentations || []} />
+        <Presentation userId={user?._id || null} />
         <h2 className="mt-5">Others presentations</h2>
         <hr />
         <OthersPresentations userId={user?._id || null} />
