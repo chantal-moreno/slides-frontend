@@ -21,9 +21,10 @@ function NewPresentation({ onHide, userId, show }) {
       });
 
       if (response.status === 200) {
+        console.log(response.data);
         onHide();
         // Go canvas
-        navigate('/canvas');
+        navigate('/canvas', { state: { presentation: response.data } });
       } else {
         alert(`Error: ${response.data.message}`);
       }

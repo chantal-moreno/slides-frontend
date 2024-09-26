@@ -6,9 +6,11 @@ import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { format } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
 
 function Presentation({ userId }) {
   const [presentations, setPresentations] = useState([]);
+  const navigate = useNavigate();
 
   const formatDate = (date) => {
     return format(new Date(date), 'dd/MM/yyyy - HH:mm');
@@ -35,6 +37,10 @@ function Presentation({ userId }) {
     fetchPresentations();
   }, [userId]);
 
+  const handleOpen = (presentation) => {
+    navigate('/canvas', { state: { presentation } });
+  };
+
   return (
     <Row xs={1} md={2} lg={4} className="g-4">
       {presentations.map((presentation) => (
@@ -46,7 +52,12 @@ function Presentation({ userId }) {
               <Card.Subtitle className="mb-2 text-muted">
                 {`Created:  ${formatDate(presentation.createdAt)}`}
               </Card.Subtitle>
-              <Button variant="primary">Open</Button>
+              <Button
+                variant="primary"
+                onClick={() => handleOpen(presentation)}
+              >
+                Open
+              </Button>
             </Card.Body>
             <Card.Footer className="text-muted">
               {`Last modification:  ${formatDate(presentation.updatedAt)}`}
