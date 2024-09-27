@@ -1,5 +1,6 @@
 import DashNavbar from './DashNavbar';
 import { useLocation } from 'react-router-dom';
+import Tools from './Tools';
 
 function Canvas() {
   const location = useLocation();
@@ -9,6 +10,7 @@ function Canvas() {
     <>
       <DashNavbar />
       <h1>{presentation.title}</h1>
+      <Tools />
     </>
   );
 }
